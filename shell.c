@@ -3,7 +3,7 @@
 #include<stdbool.h>
 #include<string.h>
 #include<unistd.h>
-// #include<sys/types.h>
+#include<sys/types.h>
 #include<sys/wait.h>
 int creatP(){
     pid_t newPid = fork();
@@ -12,6 +12,15 @@ int creatP(){
 
 void executeCommand(char command[]){
     return ;
+}
+
+char** splitInput(char* userInput){
+    char** arr;
+    int x=0;
+    while(userInput[x]!='\0'){
+        printf("%c",userInput[x]);
+        x++;
+    }
 }
 
 int main(){
