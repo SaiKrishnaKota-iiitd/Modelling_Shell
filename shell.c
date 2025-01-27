@@ -61,30 +61,24 @@ int checkRedirection(char* arglist[],int maxarg){
     int mode = 0;
 
     while(arglist[i]!=NULL){
-        // printf("%d %s\n",i,arglist[i]);
         if(strcmp("<",arglist[i])==0){
             printf(" case 1: %s", arglist[i]);
             mode =  1;
         }
         else if(strcmp("<<", arglist[i])==0){
-            // printf(" case 2: %s", arglist[i]);
             mode =  2;
         }
         else if(strcmp(">", arglist[i])==0){
-            // printf(" case 3: %s", arglist[i]);
             mode =  3;
         }
         else if(strcmp(">>", arglist[i])==0){
-            // printf(" case 4: %s", arglist[i]);
             mode =  4;
         }
 
         if(mode != 0){
-            // printf("%s %d-%d %s",arglist[i],mode,i,arglist[i+1]);
             if(i>(maxarg -2) || arglist[i+1]==NULL){
                 printf("enter the required file's path\n");
             };
-            // printf("file is : %s\n",arglist[i+1]);
             if(mode == 1) fileID = open(arglist[i+1],O_RDWR | O_CREAT ,0640);
             else if(mode == 2) fileID = open(arglist[i+1],O_RDWR | O_CREAT ,0640);
             else if(mode == 3) fileID = open(arglist[i+1],O_RDWR | O_CREAT | O_TRUNC ,0640);
@@ -103,7 +97,6 @@ int checkRedirection(char* arglist[],int maxarg){
             if(execvp(arglist[0],arglist)==-1) printf("failed to execute the given command\n");
             exit(0);
             
-            // break;
         }
         i++;
     }
@@ -119,7 +112,7 @@ int handleBuiltin(char* arglist[]){
             getcwd(b_path,500);
             chdir(arglist[1]);
             getcwd(a_path,500);
-            if(strcmp(b_path,a_path)==0) printf("%s : Not a directory\n",arglist[i]);
+            if(strcmp(b_path,a_path)==0) printf("%s : Not a directory\n",arglist[1]);
         }
         executed = 1;
     }
