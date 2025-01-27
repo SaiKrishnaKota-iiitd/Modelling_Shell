@@ -54,16 +54,8 @@ void splitInput(char* str,char** arglist,int p){
 
 }
 
-void printest(char** arglist){
-    for(int i=0;i<10;i++){
-        arglist[i] = (char*)malloc(sizeof(char)*10);
-        strcpy(arglist[i],"HI");
-    }
-    // arglist[10]=NULL;
-    return;
-}
 
-int checkRedirection(char* arglist[],int *pos,int maxarg){
+int checkRedirection(char* arglist[],int maxarg){
     int i=0;
     int fileID = -1;
     int mode = 0;
@@ -72,22 +64,18 @@ int checkRedirection(char* arglist[],int *pos,int maxarg){
         // printf("%d %s\n",i,arglist[i]);
         if(strcmp("<",arglist[i])==0){
             printf(" case 1: %s", arglist[i]);
-            *pos = i;
             mode =  1;
         }
         else if(strcmp("<<", arglist[i])==0){
             // printf(" case 2: %s", arglist[i]);
-            *pos = i;
             mode =  2;
         }
         else if(strcmp(">", arglist[i])==0){
             // printf(" case 3: %s", arglist[i]);
-            *pos = i;
             mode =  3;
         }
         else if(strcmp(">>", arglist[i])==0){
             // printf(" case 4: %s", arglist[i]);
-            *pos = i;
             mode =  4;
         }
 
@@ -122,9 +110,30 @@ int checkRedirection(char* arglist[],int *pos,int maxarg){
     return mode;
 }
 
+int handleBuiltin(char* arglist[]){
+    int executed = 0;
+    if(strcmp("cd",arglist[0])==0){
+        if(arglist[1]!=NULL){
+            chdir(arglist[1]);
+        }
+        executed = 1;
+    }
+
+    if(strcmp("help",arglist[0])==0){
+            printf("******************* CUSTOM SHELL ***********************\n");
+            printf("Most of the shell commands are executables like :\n");
+            printf("> ls [options]\n");
+            printf("Few commands are defined internally:\n");
+            printf("> cd <path>\n> help\n\n");
+            printf("Use '>','>>','<','<<' for input output redirection\n");
+        executed = 1;
+    }
+    return executed;
+}
+
 int main(int argc, char* argv[]){
     int argcount=55;
-    char filepath[100];
+    char filepath[500];
     int inputlimit = 100;
 
     char command[inputlimit];
@@ -133,26 +142,33 @@ int main(int argc, char* argv[]){
     char* args[argcount];
     for(int i=0;i<argcount;i++) args[i]=NULL;
 
+    printf("************************ WELCOME **********************************\n");
     while(z<50){
-        
-        // fgets(command,50,stdin);
-        printf(">> ");
+        printf("%s",getcwd(filepath,500));
+        //user input
+        printf(" >> ");
         scanf("%[^\n]s", command);
         getchar();
-        // printf("%s",command);
         if(strcmp(command,"exit")==0) break;
+
+        //parsing the user input
         splitInput(command,args,0);
+        
+        if(strcmp("cd",args[0])==0 || strcmp("help",args[0])==0 ){
+            handleBuiltin(args);
+            continue;
+        }
 
 
         //creating child process to handle command
         pid_t Id = fork();
         if(Id==0){
-            int pos = -1;
-            int redirection = checkRedirection(args,&pos,argcount);
-            // printf("child process : %d\n",Id);
-            // char* newargv[] = {command,"one","two","three"};
-            // printf("%s commnd\n",command)
-            if(execvp(args[0],args)==-1) printf("failed to execute the given command\n");
+            //checking if redirection is needed
+            int redirection = checkRedirection(args,argcount);
+            if(execvp(args[0],args)==-1) {
+
+                printf("failed to execute the given command\n");
+            }
             break;
             //ends the child process
         }
@@ -160,12 +176,13 @@ int main(int argc, char* argv[]){
             printf("command can't be executed\n");
         }
         else{
-            wait(Id);
+
+            wait((pid_t)Id);
+            
             // wait for the child process to execute the command
         }
 
         
-        printf("**********************************************\n");
 
 
         for(int i=0;i<argcount;i++){
@@ -177,15 +194,9 @@ int main(int argc, char* argv[]){
         }
         strcpy(command,"");
         z++;
+        printf("\n");
     }
     if(z>=50) printf(" limit reached \n Exiting......");
-
-    // printf("*********test program**********\n");
-    // printf("printing the args passed\n");
-    // for(int i=0;i<argc;i++){
-    //     printf("%s\n",argv[i]);
-    // }
-    // printf("********ending test program*********\n");
 
     return 0;
 
