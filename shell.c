@@ -112,9 +112,14 @@ int checkRedirection(char* arglist[],int maxarg){
 
 int handleBuiltin(char* arglist[]){
     int executed = 0;
+    char b_path[500];
+    char a_path[500];
     if(strcmp("cd",arglist[0])==0){
         if(arglist[1]!=NULL){
+            getcwd(b_path,500);
             chdir(arglist[1]);
+            getcwd(a_path,500);
+            if(strcmp(b_path,a_path)==0) printf("%s : Not a directory\n",arglist[i]);
         }
         executed = 1;
     }
@@ -177,7 +182,7 @@ int main(int argc, char* argv[]){
         }
         else{
 
-            wait((pid_t)Id);
+            waitpid(Id,NULL,0);
             
             // wait for the child process to execute the command
         }
