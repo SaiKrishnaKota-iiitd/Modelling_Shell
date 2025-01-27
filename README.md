@@ -15,7 +15,12 @@ This project is a custom shell implementationusing system calls.This shell is ca
 3. Run Executables using system calls.
     Using System calls to run the executables.
 
+# Process Tree Snapshot
+![Process Tree](pstreeSnapshot.png "Optional Title")
+
 # Usage 
 1. Run 'make' to build the binary.
 
-2. Run 'make run' to execute the shell.
+2. Run 'make run' to execute the custom shell. 
+
+3. Try commands like cd,ls,help,echo or try to run custom programs.
